@@ -1,30 +1,46 @@
 {
   "expo": {
-    "name": "RateItApp",
-    "slug": "RateItApp",
+    "name": "RateIt",
+    "slug": "rateit-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.rateit"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.yourname.rateit"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "RateIt accède à ta galerie pour ajouter des images aux éléments.",
+          "cameraPermission": "RateIt accède à la caméra pour prendre une photo."
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": false
+        }
+      ]
+    ],
+    "scheme": "rateit",
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
