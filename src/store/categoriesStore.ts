@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { db } from '@/db/client';
-import { categories, criteria } from '@/db/schema';
-import type { Category, NewCategory, Criterion, NewCriterion } from '@/db/schema';
+import { db } from '../db/client';
+import { categories, criteria } from '../db/schema';
+import type { Category, NewCategory, Criterion, NewCriterion } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 interface CategoriesState {

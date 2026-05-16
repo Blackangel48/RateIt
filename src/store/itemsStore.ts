@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { db } from '@/db/client';
-import { items, itemCriteriaScores } from '@/db/schema';
-import type { Item, NewItem, ItemCriterionScore } from '@/db/schema';
+import { db } from '../db/client';
+import { items, itemCriteriaScores } from '../db/schema';
+import type { Item, NewItem, ItemCriterionScore } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 interface ItemsState {
