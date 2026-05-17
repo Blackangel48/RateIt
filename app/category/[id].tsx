@@ -144,9 +144,14 @@ export default function CategoryScreen() {
           </View>
         </View>
 
-        <TouchableOpacity onPress={handleDeleteCategory} style={styles.moreBtn}>
-          <Ionicons name="trash-outline" size={20} color="#C9C7BE" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => router.push(`/category/edit?id=${categoryId}`)} style={styles.moreBtn}>
+            <Ionicons name="pencil-outline" size={20} color="#888780" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteCategory} style={styles.moreBtn}>
+            <Ionicons name="trash-outline" size={20} color="#C9C7BE" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Filtres par statut */}
@@ -232,6 +237,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 16, fontWeight: '500', color: '#2C2C2A' },
   headerMeta: { fontSize: 11, color: '#888780', marginTop: 1 },
+  headerActions: { flexDirection: 'row', gap: 2 },
   moreBtn: { padding: 6 },
 
   filterBar: {
