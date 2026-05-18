@@ -13,14 +13,18 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.rateit"
+      "bundleIdentifier": "com.blackangel_software.rateit"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yourname.rateit"
+      "package": "com.blackangel_software.rateit",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -41,6 +45,12 @@
     "scheme": "rateit",
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "08de929c-a5b5-42c3-9d5b-ce6ee780a833"
+      }
     }
   }
 }
