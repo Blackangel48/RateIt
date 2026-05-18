@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { db } from '@/db/client';
-import { categories, criteria } from '@/db/schema';
-import type { Category, NewCategory, Criterion, NewCriterion } from '@/db/schema';
+import { db } from '../db/client';
+import { categories, criteria } from '../db/schema';
+import type { Category, NewCategory, Criterion } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 interface CategoriesState {
@@ -13,6 +13,9 @@ interface CategoriesState {
   updateCategory: (id: number, data: Partial<NewCategory>) => Promise<void>;
   deleteCategory: (id: number) => Promise<void>;
   getCriteria: (categoryId: number) => Promise<Criterion[]>;
+  addCriterion: (categoryId: number, label: string, position: number) => Promise<Criterion>;
+  deleteCriterion: (criterionId: number) => Promise<void>;
+  renameCriterion: (criterionId: number, label: string) => Promise<void>;
 }
 
 export const useCategoriesStore = create<CategoriesState>((set, get) => ({
@@ -27,18 +30,11 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => ({
 
   createCategory: async (data, criteriaLabels) => {
     const [newCat] = await db.insert(categories).values(data).returning();
-
-    // Insérer les critères associés
     if (criteriaLabels.length > 0) {
       await db.insert(criteria).values(
-        criteriaLabels.map((label, i) => ({
-          categoryId: newCat.id,
-          label,
-          position: i,
-        }))
+        criteriaLabels.map((label, i) => ({ categoryId: newCat.id, label, position: i }))
       );
     }
-
     await get().fetchCategories();
     return newCat;
   },
@@ -49,16 +45,27 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => ({
   },
 
   deleteCategory: async (id) => {
-    // Les items et critères sont supprimés en cascade (schema onDelete: 'cascade')
     await db.delete(categories).where(eq(categories.id, id));
     await get().fetchCategories();
   },
 
   getCriteria: async (categoryId) => {
-    return db
-      .select()
-      .from(criteria)
-      .where(eq(criteria.categoryId, categoryId))
-      .all();
+    return db.select().from(criteria).where(eq(criteria.categoryId, categoryId)).all();
+  },
+
+  addCriterion: async (categoryId, label, position) => {
+    const [newCriterion] = await db
+      .insert(criteria)
+      .values({ categoryId, label, position, weight: 1 })
+      .returning();
+    return newCriterion;
+  },
+
+  deleteCriterion: async (criterionId) => {
+    await db.delete(criteria).where(eq(criteria.id, criterionId));
+  },
+
+  renameCriterion: async (criterionId, label) => {
+    await db.update(criteria).set({ label }).where(eq(criteria.id, criterionId));
   },
 }));

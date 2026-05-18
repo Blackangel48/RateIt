@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import migrations from '@/db/migrations/migrations';
-import { db } from '@/db/client';
-import { seedStatuses } from '@/db/seeds';
+import migrations from '../src/db/migrations/migrations';
+import { db } from '../src/db/client';
+import { seedStatuses } from '../src/db/seeds';
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
