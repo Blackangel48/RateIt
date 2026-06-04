@@ -34,6 +34,7 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="category/new" options={{ title: 'Nouvelle catégorie', presentation: 'modal' }} />
       <Stack.Screen name="category/[id]" options={{ title: 'Catégorie' }} />
+      <Stack.Screen name="category/edit" options={{ title: 'Modifier la catégorie', presentation: 'modal'}}/>
       <Stack.Screen name="item/new" options={{ title: 'Ajouter un élément', presentation: 'modal' }} />
       <Stack.Screen name="item/[id]" options={{ title: 'Détail' }} />
     </Stack>
