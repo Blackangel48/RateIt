@@ -1,8 +1,12 @@
 import { useEffect } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity,
-  StyleSheet, Pressable,
+  View, Text, TouchableOpacity,
+  StyleSheet, Pressable, Alert
 } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,25 +15,42 @@ import type { Category } from '@/db/schema';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { categories, fetchCategories } = useCategoriesStore();
+  const { categories, fetchCategories, deleteCategory } = useCategoriesStore();
 
   useEffect(() => { fetchCategories(); }, []);
 
-  const renderCategory = ({ item }: { item: Category }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => router.push(`/category/${item.id}`)}
-      activeOpacity={0.7}
-    >
-      <View style={[styles.iconBox, { backgroundColor: item.color ?? '#F1EFE8' }]}>
-        <Text style={styles.iconText}>{item.icon ?? '📁'}</Text>
-      </View>
-      <View style={styles.cardInfo}>
-        <Text style={styles.cardName}>{item.name}</Text>
-        <Text style={styles.cardMeta}>barème /{item.scoreMax} · grain {item.scoreGrain}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={18} color="#B4B2A9" />
-    </TouchableOpacity>
+  const handleDeleteCategory = (category: Category) => {
+    Alert.alert(
+      'Supprimer',
+      `Supprimer "${category.name}" ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Supprimer', style: 'destructive', onPress: () => deleteCategory(category.id) },
+      ]
+    );
+  };
+
+  const renderCategory = ({ item, drag, isActive }: RenderItemParams<Category>) => (
+    <ScaleDecorator>
+      <Pressable
+        style={[styles.card, isActive && styles.cardDragging]}
+        onPress={() => router.push(`/category/${item.id}`)}
+        onLongPress={drag}
+        delayLongPress={200}
+      >
+        <View style={[styles.iconBox, { backgroundColor: item.color ?? '#F1EFE8' }]}>
+          <Text style={styles.iconText}>{item.icon ?? '📁'}</Text>
+        </View>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardName}>{item.name}</Text>
+          <Text style={styles.cardMeta}>barème /{item.scoreMax} · grain {item.scoreGrain}</Text>
+        </View>
+        {isActive
+          ? <Ionicons name="reorder-three" size={20} color="#B4B2A9" />
+          : <Ionicons name="chevron-forward" size={18} color="#B4B2A9" />
+        }
+      </Pressable>
+    </ScaleDecorator>
   );
 
   return (
@@ -44,7 +65,7 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <FlatList
+      <DraggableFlatList
         data={categories}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderCategory}
@@ -78,6 +99,13 @@ const styles = StyleSheet.create({
     padding: 14, borderRadius: 12,
     borderWidth: 0.5, borderColor: '#D3D1C7',
     backgroundColor: '#fff',
+  },
+  cardDragging: {
+    backgroundColor: '#F8F7F4',
+    borderColor: '#E24B4A',
+    shadowColor: '#000', shadowOpacity: 0.12,
+    shadowRadius: 8, shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
   },
   iconBox: {
     width: 44, height: 44, borderRadius: 8,

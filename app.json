@@ -21,7 +21,11 @@
         "backgroundColor": "#f3491e"
       },
       "package": "com.blackangel_software.rateit",
+<<<<<<< Updated upstream
       "versionCode": 5
+=======
+      "versionCode": 4
+>>>>>>> Stashed changes
     },
     "plugins": [
       "expo-router",

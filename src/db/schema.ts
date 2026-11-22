@@ -11,6 +11,7 @@ export const categories = sqliteTable('categories', {
   color: text('color'),             // code HEX ex: "#FAEEDA"
   scoreMax: int('score_max').notNull().default(10),
   scoreGrain: real('score_grain').notNull().default(0.5),
+  position: int('position').notNull().default(0), // ordre d'affichage
   createdAt: text('created_at').default(sql`(datetime('now'))`),
 });
 
@@ -54,6 +55,7 @@ export const items = sqliteTable('items', {
   description: text('description'),
   imagePath: text('image_path'),    // chemin local expo-file-system
   score: real('score'),             // note globale finale
+  position: int('position').notNull().default(0), // ordre d'affichage
   createdAt: text('created_at').default(sql`(datetime('now'))`),
   updatedAt: text('updated_at').default(sql`(datetime('now'))`),
 });

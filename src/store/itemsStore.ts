@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { db } from '../db/client';
 import { items, itemCriteriaScores } from '../db/schema';
 import type { Item, NewItem, ItemCriterionScore } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 
 interface ItemsState {
   items: Item[];
@@ -12,6 +12,7 @@ interface ItemsState {
   createItem: (data: NewItem) => Promise<Item>;
   updateItem: (id: number, data: Partial<NewItem>) => Promise<void>;
   deleteItem: (id: number) => Promise<void>;
+  reorderItems: (categoryId: number, orderedIds: number[]) => Promise<void>;
   saveCriterionScore: (itemId: number, criterionId: number, score: number) => Promise<void>;
   getCriterionScores: (itemId: number) => Promise<ItemCriterionScore[]>;
 }
@@ -26,6 +27,7 @@ export const useItemsStore = create<ItemsState>((set, get) => ({
       .select()
       .from(items)
       .where(eq(items.categoryId, categoryId))
+      .orderBy(asc(items.position))
       .all();
     set({ items: result, loading: false });
   },
@@ -52,6 +54,25 @@ export const useItemsStore = create<ItemsState>((set, get) => ({
   deleteItem: async (id) => {
     await db.delete(items).where(eq(items.id, id));
     set((state) => ({ items: state.items.filter((i) => i.id !== id) }));
+  },
+
+  reorderItems: async (categoryId, orderedIds) => {
+    // Mettre à jour optimistiquement l'état local
+    const currentItems = get().items;
+    const reordered = orderedIds
+      .map((id, index) => {
+        const item = currentItems.find(i => i.id === id);
+        return item ? { ...item, position: index } : null;
+      })
+      .filter(Boolean) as Item[];
+    set({ items: reordered });
+ 
+    // Persister en base
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        db.update(items).set({ position: index }).where(eq(items.id, id))
+      )
+    );
   },
 
   saveCriterionScore: async (itemId, criterionId, score) => {

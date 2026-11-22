@@ -1,8 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity,
+  View, Text, TouchableOpacity,
   StyleSheet, Pressable, Alert,
 } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -185,7 +189,7 @@ export default function CategoryScreen() {
       </View>
 
       {/* Liste */}
-      <FlatList
+      <DraggableFlatList
         data={filteredItems}
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
